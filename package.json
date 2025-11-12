@@ -1,0 +1,29 @@
+{
+  "name": "gg_gambit_service",
+  "version": "1.0.0",
+  "description": "We are making an app to bet on live Esport Valorant games. This is our project for our IT 391 course at Illinois State University.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "comp_start": "node dist/app.js",
+    "start": "npx tsx src/app.ts",
+    "dev": "ts-node src/app.ts"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "mysql2": "^3.15.1",
+    "nodemailer": "^7.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "@types/nodemailer": "^7.0.1",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.3"
+  }
+}

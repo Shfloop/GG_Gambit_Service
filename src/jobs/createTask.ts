@@ -1,7 +1,4 @@
-import {
-  CloudTasksClient,
-  protos,
-} from '../../node_modules/@google-cloud/tasks/build/esm/src/index.js';
+import {CloudTasksClient, protos} from '@google-cloud/tasks';
 import {task_queue} from '@/config/config.js';
 const client = new CloudTasksClient();
 
@@ -19,19 +16,19 @@ export async function createTask(
   const parent = client.queuePath(project, location, queue);
   const time = Math.ceil(date.getSeconds() / 30) * 30;
   const task = {
-    appEngineHttpRequest: {
+    httpRequest: {
       headers: {
         'Content-Type': 'text/plain', // Set content type to ensure compatibility your application's request parsing
       },
       httpMethod: 'POST',
-      relativeUri: relative_uri,
+      url: task_queue.task_run_url + relative_uri,
       body: null,
       name: relative_uri + time.toString(),
     },
   } as protos.google.cloud.tasks.v2.ITask;
 
-  if (payload && task.appEngineHttpRequest) {
-    task.appEngineHttpRequest.body = Buffer.from(payload).toString('base64');
+  if (payload && task.httpRequest) {
+    task.httpRequest.body = Buffer.from(payload).toString('base64');
   }
 
   task.scheduleTime = {

@@ -1,7 +1,7 @@
 import {CloudTasksClient, protos} from '@google-cloud/tasks';
 import {task_queue} from '@/config/config.js';
 const client = new CloudTasksClient();
-
+// const {protos} = client;
 export async function createTask(
   date: Date,
   relative_uri: string,
@@ -20,20 +20,21 @@ export async function createTask(
       headers: {
         'Content-Type': 'text/plain', // Set content type to ensure compatibility your application's request parsing
       },
-      httpMethod: 'POST',
+      httpMethod: protos.google.cloud.tasks.v2.HttpMethod.POST,
       url: task_queue.task_run_url + relative_uri,
-      body: null,
+      body: payload ? Buffer.from(payload).toString('base64') : null,
       name: relative_uri + time.toString(),
     },
-  } as protos.google.cloud.tasks.v2.ITask;
-
-  if (payload && task.httpRequest) {
-    task.httpRequest.body = Buffer.from(payload).toString('base64');
-  }
-
-  task.scheduleTime = {
-    seconds: time,
+    scheduleTime: {seconds: time},
   };
+
+  // if (payload && task.httpRequest) {
+  //   task.httpRequest.body = Buffer.from(payload).toString('base64');
+  // }
+
+  // task.scheduleTime = {
+  //   seconds: time,
+  // };
 
   console.log('Sending task:');
   console.log(task);

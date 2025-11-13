@@ -1,4 +1,7 @@
-import {CloudTasksClient, protos} from '@google-cloud/tasks/';
+import {
+  CloudTasksClient,
+  protos,
+} from '../../node_modules/@google-cloud/tasks/build/esm/src/index.js';
 import {task_queue} from '@/config/config.js';
 const client = new CloudTasksClient();
 

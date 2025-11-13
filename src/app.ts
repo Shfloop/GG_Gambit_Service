@@ -78,10 +78,6 @@ app.post('/force_all_bets_update', async (req: Request, res: Response) => {
   res.send(`Printed task payload: ${req.body}`).end();
 });
 
-app.get('*', (req: Request, res: Response) => {
-  res.send('OK').end();
-});
-
 app.listen(config.server_port, () => {
   console.log(`App listening on port ${config.server_port}`);
   console.log('Press Ctrl+C to quit.');

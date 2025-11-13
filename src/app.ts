@@ -45,19 +45,26 @@ app.post('/check_for_concluded', async (req: Request, res: Response) => {
  * expects a match id and num retries
  * -1 for running just once
  */
-app.post(
-  '/check_upcoming_to_live',
-  async (req: Request<{}, {}, PayloadBody>, res: Response) => {
-    // Log the request payload
-    let payload = req.body;
+app.post('/check_upcoming_to_live', async (req, res) => {
+  try {
+    // decode the base64 string
+    const decoded = Buffer.from(req.body, 'base64').toString('utf-8');
+    const payload = JSON.parse(decoded);
+
     if (!payload.failed_attempts || !payload.for_match_id) {
-      res.send(`Error Body is incorrect: ${req.body}`).end();
+      return res.status(400).send(`Error Body is incorrect: ${decoded}`);
     }
-    console.log(`Received task with payload: ${req.body}`);
+
+    console.log(`Received task with payload:`, payload);
+
     await checkUpcomingGoneLive(payload.for_match_id, payload.failed_attempts);
-    res.send(`Printed task payload: ${req.body}`).end();
+
+    res.send(`Printed task payload: ${JSON.stringify(payload)}`);
+  } catch (err) {
+    console.error('Error parsing task payload:', err);
+    res.status(400).send('Invalid task body');
   }
-);
+});
 /**
  * Checks for matches that are upcoming
  * Doesnt really need to be used or scheduled

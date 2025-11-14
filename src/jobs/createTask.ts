@@ -23,9 +23,9 @@ export async function createTask(
       httpMethod: protos.google.cloud.tasks.v2.HttpMethod.POST,
       url: task_queue.task_run_url + relative_uri,
       body: payload ? Buffer.from(payload).toString('base64') : null,
-      name: relative_uri + time.toString(),
     },
-    scheduleTime: {seconds: time},
+    name: relative_uri + time.toString(),
+    scheduleTime: {seconds: new Date(time * 1000).toISOString()},
   };
 
   // if (payload && task.httpRequest) {

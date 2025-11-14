@@ -14,7 +14,7 @@ export async function createTask(
 
   // Construct the fully qualified queue name.
   const parent = client.queuePath(project, location, queue);
-  const time = Math.ceil(date.getSeconds() / 30) * 30;
+  const time_seconds = Math.ceil(date.getTime() / 30000) * 30;
   const task = {
     httpRequest: {
       headers: {
@@ -24,8 +24,8 @@ export async function createTask(
       url: task_queue.task_run_url + relative_uri,
       body: payload ? Buffer.from(payload).toString('base64') : null,
     },
-    name: relative_uri + time.toString(),
-    scheduleTime: {seconds: new Date(time * 1000).toISOString()},
+    name: relative_uri + time_seconds.toString(),
+    scheduleTime: {seconds: time_seconds},
   };
 
   // if (payload && task.httpRequest) {

@@ -66,8 +66,12 @@ export async function checkUpcomingGoneLive(
       let execution_time = new Date(
         Math.round((Date.now() + 3600000) / 300000) * 300000
       ); // schedule for an hour in the 5 min timeslot timeslots of 5 minutes for retries so multiple requests can be supported
+      try {
+        await createTask(execution_time, '/check_for_concluded');
+      } catch (err) {
+        console.log(err);
+      }
 
-      await createTask(execution_time, '/check_for_concluded');
       if (id === for_match_id) match_updated = true;
     }
   }
@@ -88,7 +92,11 @@ export async function checkUpcomingGoneLive(
       for_match_id: for_match_id,
       failed_attempts: failed_attempts + 1,
     } as PayloadBody;
-    createTask(execution_time, JSON.stringify(payload));
+    try {
+      createTask(execution_time, JSON.stringify(payload));
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 //i should populate matches but i guess i dont really want to populate database if noone ever checks what bets we have available

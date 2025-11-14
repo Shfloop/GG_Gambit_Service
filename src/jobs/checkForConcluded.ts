@@ -42,8 +42,11 @@ export async function checkForLiveConclusions() {
     let execution_time = new Date(
       Math.round((Date.now() + 300000) / 300000) * 300000
     ); // add 5 minutes and try again only allow timeslots of 5 minutes for retries so multiple requests can be supported
-
-    await createTask(execution_time, '/check_for_concluded');
+    try {
+      await createTask(execution_time, '/check_for_concluded');
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 async function findMatchingResult(

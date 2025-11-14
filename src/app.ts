@@ -48,11 +48,11 @@ app.post('/check_for_concluded', async (req: Request, res: Response) => {
 app.post('/check_upcoming_to_live', async (req, res) => {
   try {
     // decode the base64 string
-    const decoded = Buffer.from(req.body, 'base64').toString('utf-8');
-    const payload = JSON.parse(decoded);
+
+    const payload = JSON.parse(req.body);
 
     if (!payload.failed_attempts || !payload.for_match_id) {
-      return res.status(400).send(`Error Body is incorrect: ${decoded}`);
+      return res.status(400).send(`Error Body is incorrect: ${req.body}`);
     }
 
     console.log(`Received task with payload:`, payload);

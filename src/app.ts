@@ -24,6 +24,13 @@ app.get('/', (req: Request, res: Response) => {
 app.post('/log_payload', (req: Request, res: Response) => {
   // Log the request payload
   console.log(`Received task with payload: ${req.body}`);
+  const payload = JSON.parse(req.body) as PayloadBody;
+
+  if (!payload.failed_attempts || !payload.for_match_id) {
+    return res.status(400).send(`Error Body is incorrect: ${req.body}`);
+  }
+
+  console.log(`Received JSON task with payload:`, payload);
   res.send(`Printed task payload: ${req.body}`).end();
 });
 /**
@@ -45,13 +52,14 @@ app.post('/check_for_concluded', async (req: Request, res: Response) => {
  * expects a match id and num retries
  * -1 for running just once
  */
-app.post('/check_upcoming_to_live', async (req, res) => {
+app.post('/check_upcoming_to_live', async (req: Request, res: Response) => {
   try {
     // decode the base64 string
 
-    const payload = JSON.parse(req.body);
+    const payload = JSON.parse(req.body) as PayloadBody;
 
     if (!payload.failed_attempts || !payload.for_match_id) {
+      console.log(`body parsed but does not have correct format ${payload}`);
       return res.status(400).send(`Error Body is incorrect: ${req.body}`);
     }
 

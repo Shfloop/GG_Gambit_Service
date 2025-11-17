@@ -25,11 +25,10 @@ app.get('/', (req: Request, res: Response) => {
 
 app.post('/log_payload', (req: Request<{}, {}, PayloadBody>, res: Response) => {
   // Log the request payload
-  console.log(`Received task with payload: ${req.body}`);
   const failed_attempts = req.body.failed_attempts;
   const for_match_id = req.body.for_match_id;
 
-  if (!failed_attempts || !for_match_id) {
+  if (typeof failed_attempts !== 'number' || typeof for_match_id !== 'number') {
     return res.status(400).send(`Error Body is incorrect: ${req.body}`);
   }
 
@@ -64,7 +63,10 @@ app.post(
 
       const {for_match_id, failed_attempts} = req.body;
 
-      if (!failed_attempts || !for_match_id) {
+      if (
+        typeof failed_attempts !== 'number' ||
+        typeof for_match_id !== 'number'
+      ) {
         console.log(
           `body parsed but does not have correct format ${for_match_id}`
         );

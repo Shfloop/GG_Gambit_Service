@@ -15,6 +15,7 @@ app.enable('trust proxy');
 // Set the Content-Type of the Cloud Task to ensure compatibility
 // By default, the Content-Type header of the Task request is set to "application/octet-stream"
 // see https://cloud.google.com/tasks/docs/reference/rest/v2beta3/projects.locations.queues.tasks#AppEngineHttpRequest
+app.use(express.json());
 app.use(express.text());
 
 app.get('/', (req: Request, res: Response) => {
@@ -22,16 +23,18 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello, World!').end();
 });
 
-app.post('/log_payload', (req: Request, res: Response) => {
+app.post('/log_payload', (req: Request<{}, {}, PayloadBody>, res: Response) => {
   // Log the request payload
   console.log(`Received task with payload: ${req.body}`);
-  const payload = JSON.parse(req.body) as PayloadBody;
+  const failed_attempts = req.body.failed_attempts;
+  const for_match_id = req.body.for_match_id;
 
-  if (!payload.failed_attempts || !payload.for_match_id) {
+  if (!failed_attempts || !for_match_id) {
     return res.status(400).send(`Error Body is incorrect: ${req.body}`);
   }
 
-  console.log(`Received JSON task with payload:`, payload);
+  console.log(`Received JSON task with payload:`, req.body);
+  console.log(`data ${failed_attempts}, ${for_match_id}`);
   res.send(`Printed task payload: ${req.body}`).end();
 });
 /**
@@ -53,27 +56,32 @@ app.post('/check_for_concluded', async (req: Request, res: Response) => {
  * expects a match id and num retries
  * -1 for running just once
  */
-app.post('/check_upcoming_to_live', async (req: Request, res: Response) => {
-  try {
-    // decode the base64 string
+app.post(
+  '/check_upcoming_to_live',
+  async (req: Request<{}, {}, PayloadBody>, res: Response) => {
+    try {
+      // decode the base64 string
 
-    const payload = JSON.parse(req.body) as PayloadBody;
+      const {for_match_id, failed_attempts} = req.body;
 
-    if (!payload.failed_attempts || !payload.for_match_id) {
-      console.log(`body parsed but does not have correct format ${payload}`);
-      return res.status(400).send(`Error Body is incorrect: ${req.body}`);
+      if (!failed_attempts || !for_match_id) {
+        console.log(
+          `body parsed but does not have correct format ${for_match_id}`
+        );
+        return res.status(400).send(`Error Body is incorrect: ${req.body}`);
+      }
+
+      console.log(`Received task with payload:`, for_match_id);
+
+      await checkUpcomingGoneLive(for_match_id, failed_attempts);
+
+      res.send(`Printed task payload: ${for_match_id}`);
+    } catch (err) {
+      console.error('Error parsing task payload:', err);
+      res.status(400).send('Invalid task body');
     }
-
-    console.log(`Received task with payload:`, payload);
-
-    await checkUpcomingGoneLive(payload.for_match_id, payload.failed_attempts);
-
-    res.send(`Printed task payload: ${JSON.stringify(payload)}`);
-  } catch (err) {
-    console.error('Error parsing task payload:', err);
-    res.status(400).send('Invalid task body');
   }
-});
+);
 /**
  * Checks for matches that are upcoming
  * Doesnt really need to be used or scheduled

@@ -22,7 +22,7 @@ export async function createTask(
   const task = {
     httpRequest: {
       headers: {
-        'Content-Type': 'text/plain', // Set content type to ensure compatibility your application's request parsing
+        'Content-Type': 'application/json', // Set content type to ensure compatibility your application's request parsing
       },
       httpMethod: protos.google.cloud.tasks.v2.HttpMethod.POST,
       url: task_queue.task_run_url + relative_uri,

@@ -3,6 +3,7 @@ import {updateAllMatchBets} from './jobs/forceBetUpdates.js';
 import {checkUpcomingGoneLive} from './jobs/checkForLive.js';
 import {checkForLiveConclusions} from './jobs/checkForConcluded.js';
 import config from './config/config.js';
+import {createTask} from './jobs/createTask.js';
 // Instantiates a client
 export interface PayloadBody {
   for_match_id: number;
@@ -96,4 +97,20 @@ app.post('/force_all_bets_update', async (req: Request, res: Response) => {
 app.listen(config.server_port, () => {
   console.log(`App listening on port ${config.server_port}`);
   console.log('Press Ctrl+C to quit.');
+});
+app.get('test_create_task', async (req: Request, res: Response) => {
+  console.log('create task');
+  const payload = {
+    for_match_id: 10101,
+    failed_attempts: 0,
+  } as PayloadBody;
+  try {
+    await createTask(
+      new Date(Date.now()),
+      '/log_payload',
+      JSON.stringify(payload)
+    );
+  } catch (err) {
+    console.log(err);
+  }
 });

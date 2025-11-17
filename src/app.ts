@@ -98,7 +98,7 @@ app.listen(config.server_port, () => {
   console.log(`App listening on port ${config.server_port}`);
   console.log('Press Ctrl+C to quit.');
 });
-app.get('test_create_task', async (req: Request, res: Response) => {
+app.get('/test_create_task', async (req: Request, res: Response) => {
   console.log('create task');
   const payload = {
     for_match_id: 10101,
@@ -113,4 +113,5 @@ app.get('test_create_task', async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err);
   }
+  res.send('ok');
 });

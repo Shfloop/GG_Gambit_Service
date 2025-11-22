@@ -33,6 +33,7 @@ export async function checkForLiveConclusions() {
       return res as VlrMatches;
     });
   //go through matches scheduled or live
+  //this restarts if there are any live matches in our database that havent been in the response
   let should_retry: boolean = false;
   for (const match of live_matches) {
     //vlr results should only have finished matches

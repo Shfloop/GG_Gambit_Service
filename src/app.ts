@@ -1,6 +1,6 @@
 import express, {Request, Response, NextFunction} from 'express';
 import {updateAllMatchBets} from './jobs/forceBetUpdates.js';
-import {checkUpcomingGoneLive} from './jobs/checkForLive.js';
+import {updateMatch} from './jobs/checkForLive.js';
 import {checkForLiveConclusions} from './jobs/checkForConcluded.js';
 import config from './config/config.js';
 import {createTask} from './jobs/createTask.js';
@@ -75,7 +75,7 @@ app.post(
 
       console.log(`Received task with payload:`, for_match_id);
 
-      await checkUpcomingGoneLive(for_match_id, failed_attempts);
+      await updateMatch(for_match_id, failed_attempts);
 
       res.send(`Printed task payload: ${for_match_id}`);
     } catch (err) {

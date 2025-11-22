@@ -80,6 +80,7 @@ export interface MatchWithTeams extends RowDataPacket {
   b_img: string;
   odds: number;
   status: MatchStatus;
+  match_start: Date;
 }
 async function getMatchWithTeams(id: number) {
   const [rows] = await pool.query<MatchWithTeams[]>(
@@ -92,7 +93,8 @@ async function getMatchWithTeams(id: number) {
       tb.name as b_name,
       tb.img as b_img,
       m.odds,
-      m.status
+      m.status,
+      m.match_start
       FROM matches m
       join static_teams ta on m.team_a = ta.id
       join static_teams tb on m.team_b = tb.id
@@ -117,6 +119,13 @@ async function updateMatchStatus(id: number, status: MatchStatus) {
   const [rows] = await pool.query<Match[]>(
     'UPDATE matches SET status = ? WHERE id = ?',
     [status, id]
+  );
+  return rows;
+}
+async function updateMatchStart(id: number, match_start: Date) {
+  const [rows] = await pool.query<Match[]>(
+    'UPDATE matches SET match_start = ? WHERE id = ?',
+    [match_start, id]
   );
   return rows;
 }
@@ -149,4 +158,5 @@ export default {
   getMatchWithTeams,
   getMatchesByStatus,
   getAllMatches,
+  updateMatchStart,
 };

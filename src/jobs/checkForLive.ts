@@ -35,17 +35,17 @@ export async function updateMatch(
   let now = new Date(Date.now());
 
   const match_date = new Date(response.data.utcDate);
-  let year = now.getFullYear();
-  if (now.getMonth() < match_date.getMonth()) {
+  let year = now.getUTCFullYear();
+  if (now.getUTCMonth() < match_date.getUTCMonth()) {
     //if current month is less than match_date
     //it means its in the previous year
     //
     year -= 1;
-  } else if (now.getMonth() > match_date.getMonth()) {
+  } else if (now.getUTCMonth() > match_date.getUTCMonth()) {
     year += 1;
     //if the current month is greater than the match date than its in the next year now december match in january
   }
-  match_date.setFullYear(year);
+  match_date.setUTCFullYear(year);
   const [match] = await match_p; //juts get first element
   if (!match) {
     console.log(`match was not found canceling update ${for_match_id}`);
@@ -79,7 +79,7 @@ export async function updateMatch(
       failed_attempts: 0,
     } as PayloadBody;
     await createTask(
-      new Date(Math.max(match_date.getTime(), Date.now()) + 324000000),
+      new Date(Math.max(match_date.getTime(), Date.now()) + 5400000),
       '/check_for_concluded',
       JSON.stringify(payload) //just include the match id even though its not used
     );

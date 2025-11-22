@@ -19,7 +19,7 @@ export async function createMatchesTable() {
   team_a int NOT NULL,
   team_b int NOT NULL,
   odds int NOT NULL,
-  status ENUM('LIVE', 'Upcoming') NOT NULL,
+  status ENUM('live', 'upcoming') NOT NULL,
   match_start TIMESTAMP NOT NULL
 )`;
   await pool.query(query);
@@ -59,8 +59,8 @@ export interface Match extends RowDataPacket {
   match_start: Date;
 }
 export enum MatchStatus {
-  live = 'LIVE',
-  upcoming = 'Upcoming',
+  live = 'live',
+  upcoming = 'upcoming',
 }
 
 async function getMatchById(id: number) {

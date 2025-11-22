@@ -99,7 +99,7 @@ export async function updateMatch(
   //this is needed if its rescheduled
   //if the match still hasnt starter and now has passes use now
   let execution_time = new Date(
-    base_time + 60000 + Math.pow(2, Math.min(failed_attempts, 5) * 10000) //6 minute updates after 5 attempts
+    base_time + 60000 + Math.pow(2, Math.min(failed_attempts, 5)) * 10000 //6 minute updates after 5 attempts
   ); // add a minute and try again
   const payload = {
     for_match_id: for_match_id,

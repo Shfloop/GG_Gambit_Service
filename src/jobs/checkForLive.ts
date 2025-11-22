@@ -5,10 +5,18 @@ import config from '@/config/config.js';
 import {createAnonymousTask, createTask} from './createTask.js';
 import {PayloadBody} from '@/app.js';
 
+export async function updateAllMatches() {
+  let matches = await match_model.getMatchesByStatus(MatchStatus.upcoming);
+  const promises = [];
+  for (const match of matches) {
+    promises.push(updateMatch(match.id, -1));
+  }
+  await Promise.all(promises);
+}
 /**
  *
  * @param vlr_match the new match info from vlr webscrapper
- * @param match our databse representation of a match
+ * @param match our databse representation f a match
  * @returns true if the match is live or updated to live, false if not
  */
 export async function updateMatch(
@@ -55,7 +63,11 @@ export async function updateMatch(
     console.log(
       `match_start for match ${match.id} changed to ${match_date.toISOString()}`
     );
-    failed_attempts = 0; //reset failed attempts if the time changes
+    if (failed_attempts > 0) {
+      failed_attempts = 0; //reset failed attempts if the time changes
+      //only if failed attempts isnt negative because it was meant as a one time update
+    }
+
     await match_model.updateMatchStart(match.id, match_date);
     //this needs to reschedule for a different time potentially
     //match.match_start.setTime(match_date.getTime()); // this match object doesnt persist so changing it is okay

@@ -1,6 +1,6 @@
 import express, {Request, Response, NextFunction} from 'express';
 import {updateAllMatchBets} from './jobs/forceBetUpdates.js';
-import {updateMatch} from './jobs/checkForLive.js';
+import {updateAllMatches, updateMatch} from './jobs/checkForLive.js';
 import {checkForLiveConclusions} from './jobs/checkForConcluded.js';
 import config from './config/config.js';
 import {createTask} from './jobs/createTask.js';
@@ -93,6 +93,10 @@ app.post('/check_for_upcoming', (req: Request, res: Response) => {
   // Log the request payload
 
   res.send(`Printed task payload: ${req.body}`).end();
+});
+app.post('/force_all_upcoming', async (req: Request, res: Response) => {
+  console.log('updating all upcoming matches');
+  await updateAllMatches();
 });
 /**
  * Force update check for all active bets

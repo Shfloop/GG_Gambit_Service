@@ -66,7 +66,9 @@ export async function updateMatch(
     //but we need to make sure we stop propogating schedule checks
     return;
   }
-  if ((response.status.toLowerCase() as MatchStatus) === MatchStatus.live) {
+  if (
+    (response.data.status.toLowerCase() as MatchStatus) === MatchStatus.live
+  ) {
     await match_model.updateMatchStatus(match.id, MatchStatus.live);
     console.log(`updating match status to live ${match.id}`);
     //schedule a check for when we think the match would end
